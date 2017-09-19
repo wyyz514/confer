@@ -7,6 +7,9 @@
     </head>
     <body>
         <div class="container" style="height: 100vh;">
+		<% if(displaySuccess) {%>
+			<div class="alert alert-success"><%= message %></div>
+		<% } %>
             <div class="row" style="top:300px; position: relative;">
                 <div class="col-md-8 col-md-offset-4">
                     <h2>Log In to Confer</h2><br>
