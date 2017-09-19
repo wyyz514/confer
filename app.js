@@ -19,28 +19,28 @@ app.locals = {
     }
 };
 
+//some middlewares
 app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname + '/public'));
 
-// parse application/x-www-form-urlencoded
+// parse application/x-www-form-urlencoded/ parse request body
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
 
-morgan(':method :url :status :res[content-length] - :response-time ms');
-
+//start server
 app.listen(PORT, function(){
     console.log('listening on port', PORT);
 });
 
+//get handler for index/home page
 app.get('/', function(req, res){
-    res.write('Home');
-    res.end();
+   res.render('index');
 });
 
-//view handlers
+//get handlers for login and signup. Returns views
 app.get('/login', function(req, res){
     res.render('login');    
 });
