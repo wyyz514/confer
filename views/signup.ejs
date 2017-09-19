@@ -6,37 +6,55 @@
         <link rel='stylesheet' type='text/css' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' />
     </head>
     <body>
-        <div class="container-fluid" style="height: 100vh;">
+    
+        <div class="container" style="height: 100vh;">
+            <% if(displaySuccess) {%>
+        
+                <div class="alert alert-success">
+                  <ul>
+                      <li>
+                          <%= email %>
+                      </li>
+                      <li>
+                          <%= password %>
+                      </li>
+                      <li>
+                          <%= confirm %>
+                      </li>
+                  </ul>
+                </div>
+        
+            <% } %>
             <div class="row" style="top:300px; position: relative;">
                 <div class="col-md-8 col-md-offset-4">
                     <h2>Sign up with Confer</h2><br>
-                    <form action="/login" method="POST">
+                    <form action="/signup" method="POST">
                         
                         <div class="form-group row">
-                            <label for="email" class="col-sm-1 control-label">Email</label>
-                            <div class="col-sm-10 col-md-4">
-                                <input type="email" class="form-control" id="email" placeholder="Email">
+                            <label for="email" class="col-sm-2 control-label">Email</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="password" class="col-sm-1 control-label">Password</label>
-                            <div class="col-sm-10 col-md-4">
-                                <input type="password" class="form-control" id="password" placeholder="Password">
+                            <label for="password" class="col-sm-2 control-label">Password</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="password" class="form-control" id="password" placeholder="Password" name="password">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="confirm" class="col-sm-1 control-label">Confirm Password</label>
-                            <div class="col-sm-10 col-md-4">
-                                <input type="password" class="form-control" id="confirm" placeholder="Confirm Password">
+                            <label for="confirm" class="col-sm-2 control-label">Confirm Password</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="password" class="form-control" id="confirm" placeholder="Confirm Password" name="confirm">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-sm-offset-1 col-sm-10">
+                            <div class="col-sm-offset-2 col-sm-10">
                                 <button type="submit" class="btn btn-success">Sign Up</button>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <a href="/login" class="col-sm-3 col-sm-offset-1">Already have an account?</a>
+                            <a href="/login" class="col-sm-3 col-sm-offset-2">Already have an account?</a>
                         </div>
                     </form>
                 </div>

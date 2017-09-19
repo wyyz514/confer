@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/WoleObayomi/confer#readme",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "body-parser": "^1.18.1",
     "bootstrap": "^3.3.7",
     "ejs": "^2.5.7",
