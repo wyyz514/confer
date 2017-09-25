@@ -1,25 +1,14 @@
-var express = require('express');
-var app     = express();
-var bcrypt  = require('bcrypt');
-
+var express    = require('express');
+var app        = express();
+var encyptor   = require('./app/helpers/encryptor.js');
 var bodyParser = require('body-parser');
 var morgan     = require('morgan');
+var auth       = require('./app/routes/auth');
 
 var PORT       = process.env.PORT || 3000;
 
 const models = require('./loginserver/models/index');
 
-//encryption helpers
-app.locals = {
-    encryptPass: function (toEncrypt) {
-        var hash = bcrypt.hashSync(toEncrypt, 10); //10 is salt rounds...whatever that means
-        return hash;
-    },
-    
-    compare: function (notEncrypted, encrypted) {
-        return bcrypt.compareSync(notEncrypted, encrypted);
-    }
-};
 
 app.set('view engine', 'ejs');
 
@@ -37,64 +26,7 @@ app.get('/', function(req, res){
     res.render('index');
 });
 
-//view handlers
-app.get('/login', function(req, res){
-    res.render('login', {displaySuccess: false});    
-});
-
-app.get('/signup', function(req, res){
-    res.render('signup', {
-        displaySuccess: false
-    });    
-});
-
-//form submission handlers
-app.post('/login', function(req, res) {
-    var email    = req.body.email;
-    var password = req.body.password;
-	
-	if(email && password) {
-		var query = {email_address : email};
-		var user = models.login_credentials.find({where: query})
-		.then(function(user) {
-			if (user) {
-				// User exists, compare password
-				bcrypt.compare(password, user.hashed_password, function (err, doesMatch) {
-					if (doesMatch) {
-						res.render('login', {
-							displaySuccess: true,
-							message: 'You kinda logged in successfully'
-						})
-					}
-				});
-			}
-		});
-	}
-});
-
-app.post('/signup', function(req, res){
-    var email    = req.body.email;
-    var password = req.body.password;
-    var confirm  = req.body.confirm;
-    
-    if (email && password && confirm) {
-		models.login_credentials.create({email_address: email, hashed_password: app.locals.encryptPass(password)})
-        .then(() => {
-          res.render('signup', {
-           email: email,
-           password: app.locals.encryptPass(password),
-           confirm: app.locals.compare(confirm, app.locals.encryptPass(password)),
-           displaySuccess: true
-        });
-        });
-    }    
-    else {
-        res.render('signup', {
-            displaySuccess: false
-        });    
-    }
-    
-});
+app.use('/auth', auth);
 
 // synchronize models and start server 
 console.log('Synchorinizing models...');
