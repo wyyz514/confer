@@ -5,7 +5,12 @@ exports.login = function login() {
     //fail message: go to login else direct to home
     
     return function (req, res, next) {
-    
+        res.locals.status = {
+            destination: 'index',
+            message: ''
+        };
+        
+        next();
     }
 };
 
@@ -16,6 +21,11 @@ exports.signup = function signup() {
     //else direct to login page with message
     
     return function (req, res, next) {
-    
+        res.locals.status = {
+            destination: 'login',
+            message: ''
+        };
+        
+        next();
     }
 }
