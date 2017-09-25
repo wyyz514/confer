@@ -5,28 +5,20 @@ var auth      = require('../middlewares/auth');
 
 //view handlers
 router.get('/login', function(req, res){
-    res.render('login');    
+    res.render('auth/login');    
 });
 
 router.get('/signup', function(req, res){
-    res.render('signup');    
+    res.render('auth/signup');    
 });
 
 //form submission handlers
 router.post('/login', auth.login(), function(req, res) {
     
-	var status = res.locals.status;
-    
-    res.render(status.destination);
-    
 });
 
 router.post('/signup', auth.signup(), function(req, res){
-    
-    var status = res.locals.status;
-    
-    res.render(status.destination);
-    
+  
 });
 
 module.exports = router;

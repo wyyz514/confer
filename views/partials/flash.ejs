@@ -1,0 +1,19 @@
+<style>
+    .alert-container {
+        position: fixed;
+        top: 30px;
+        width: 700px;
+        left: calc((100% - 700px) / 2);
+    }
+    
+    @media (max-width: 767px) {
+        width: 85%;
+        left: 7.5%;
+    }
+</style>
+
+<% if(locals.type && locals.message) { %>
+    <div class="alert-container">
+        <div class="alert alert-<%= locals.type %>"><%= locals.message %></div> 
+    </div>
+<% } %>
