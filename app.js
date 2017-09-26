@@ -17,8 +17,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-morgan(':method :url :status :res[content-length] - :response-time ms');
-
 app.get('/', function(req, res){
     res.render('index');
 });

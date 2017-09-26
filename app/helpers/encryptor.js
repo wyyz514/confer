@@ -1,4 +1,4 @@
-var brcypt = require('bcrypt');
+var bcrypt = require('bcrypt');
 
 module.exports = {
     encryptPass: function (toEncrypt) {
