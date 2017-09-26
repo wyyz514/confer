@@ -2,12 +2,9 @@
 module.exports = function(sequelize, DataTypes) {
     var User = sequelize.define('User', {
         email: DataTypes.STRING,
-        password: {
-            type: DataTypes.STRING,
-            set: function(value) {
-                this.setDataValue('password', value);
-            }
-        }
+        password: DataTypes.STRING,
+		firstname: DataTypes.STRING,
+		lastname: DataTypes.STRING
     }, {
         classMethods: {
             associate: function(models) {

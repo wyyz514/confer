@@ -14,6 +14,7 @@ router.get('/signup', function(req, res){
 
 //form submission handlers
 router.post('/login', auth.login(), function(req, res) {
+	console.log(res.locals.authenticated);
     if(res.locals.authenticated) {
         res.locals.type    = "success";
         res.locals.message = "You successfully logged in.";
@@ -26,6 +27,8 @@ router.post('/login', auth.login(), function(req, res) {
 });
 
 router.post('/signup', auth.signup(), function(req, res){
+	console.log("we put a change here");
+	console.log(res.locals.userAlreadyExists);
     if(res.locals.userAlreadyExists) {
         res.locals.type    = "danger";
         res.locals.message = "An account for this email already exists.";

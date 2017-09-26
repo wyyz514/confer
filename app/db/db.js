@@ -1,7 +1,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function() {
-    var sequelize = new Sequelize('confer', 'root', 'root', {
+    var sequelize = new Sequelize('confer', process.env.CONFER_DB_USERNAME, process.env.CONFER_DB_PASS, {
         host: 'localhost',
         dialect: 'mysql'
     });

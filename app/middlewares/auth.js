@@ -15,8 +15,8 @@ exports.login = function login() {
          
         User
             .findOne({where: {email: email}})
-            .spread(
-                function(user, created) {
+            .then(
+                function(user) {
                     var hashedPassword    = user.get('password');
                     var isCorrectPassword = encryptor.compare(password, hashedPassword);
                     
@@ -26,9 +26,10 @@ exports.login = function login() {
                         res.locals.authenticated = false;
                     }
                 }
-            );
+            ).then(function(){
+				next();
+			});
         
-        next();
     }
 };
 
@@ -42,17 +43,19 @@ exports.signup = function signup() {
         var confirm   = req.body.confirm;
         
         User
-            .findOrCreate({where: {email: email, password: encryptor.encryptPass(password)}})
+            .findOrCreate({where: {email: email}, defaults: {password: encryptor.encryptPass(password)}})
             .spread(
                 function(user, created) {
+					console.log(created);
                     if (! created) {
                         res.locals.userAlreadyExists = true;
                     } else {  
                         res.locals.userAlreadyExists = false;
                     }
                 }
-            );
+            ).then(function(){
+				next();
+			});
         
-        next();
     }
 }
