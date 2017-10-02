@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "root",       //will eventually use environment variable or something else, change as per your needs for local database
-    "password": "minnetian8", //same as above
+    "username": "root",       
+    "password": "minnetian8",
     "database": "confer",
     "host": "127.0.0.1",
     "dialect": "mysql"
