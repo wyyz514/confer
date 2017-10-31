@@ -7,7 +7,11 @@ var port       = process.env.PORT || 3000;
 var db         = require('./app/db/db')();
 var models     = require('./app/db/models/models')();
 var auth       = require('./app/routes/auth')(models);
-//var adminInit  = require('./admin-init')(models, encryptor);
+
+if(process.argv[2] == "admin-init") {
+    var adminInit  = require('./admin-init')(models, encryptor);    
+}
+
 
 app.set('view engine', 'ejs');
 
