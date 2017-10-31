@@ -1,0 +1,12 @@
+<! doctype html>
+<html>
+    <%- include('./partials/head') %>
+    
+    <body>
+        <select>
+            <% conferences.map(function(conference){ %>
+            <option value="<%= conference.trackName %>"><%= conference.conferenceName %></option>
+            <% }); %>
+        </select>
+    </body>
+</html>
