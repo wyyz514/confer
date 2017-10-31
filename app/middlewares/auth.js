@@ -1,4 +1,4 @@
-//THIS IS THE MIDDLEWARE FILE. ONLY LOGIC. ONLY. ALL OTHER STUFF IN ROUTES 
+//THIS IS THE MIDDLEWARE FILE. ONLY LOGIC AND SETTING OF res.locals VARIABLES TO BE USED IN THE ROUTE FILE
 var encryptor  = require('../helpers/encryptor');
 
 module.exports = function(User) {
@@ -8,33 +8,43 @@ module.exports = function(User) {
 		//check email and password match in db
 
 		return function (req, res, next) {
+			//retrieve the credentials passed by the user
 			var email    = req.body.email;
 			var password = req.body.password;
 			 
-			 
+			//using findOne here since emails are unique 
 			User
 				.findOne({email: email}, function(err, obj) {
-					
+					//if there is no error,
+					//check if the obj returned is not null
+					// if it's null, we pass that the user is not authenticated
 					if(!err) {
-						if (! obj) {
+						if (!obj) {
 							console.log('User not found');
 							res.locals.authenticated = false;
 						}
 						else {
+							//if the user object is found using the email,
+							//compare the passed password with the saved password
 							var savedPassword = obj.password;
 							var isCorrectPassword = encryptor.compare(password, savedPassword);
-						
+							//set res.locals.authenticated to true so the next middleware knows what to display
+							//set the res.locals.authenticatedEmail to the email the user passed
 							if(isCorrectPassword) {
 								res.locals.authenticated = true;
 								res.locals.authenticatedEmail = email;
 							} 
 							else {
+								//hash comparison of password failed
+								//so user is not authenticated
 								console.log('Incorrect password');
 								res.locals.authenticated = false;
 							}
 						}
 					}
 					else {
+						//we received an error object
+						//so set the res.locals.err value to be used in the next middleware
 						console.log("login error", err);
 						res.locals.err = err;
 					}
@@ -48,8 +58,6 @@ module.exports = function(User) {
 
 	function signup() {
 
-		//check email not used
-
 		return function (req, res, next) {
 			var email     = req.body.email;
 			var password  = req.body.password;
@@ -57,21 +65,33 @@ module.exports = function(User) {
 			
 			console.log(email, password);
 			//compare password and confirm
-			User.find({email: email}, function(err,obj) { 
-				console.log(err,'\n',obj);
-				if(obj.length == 0 && !err) {
+			if(password !== confirm) {
+					
+			}
+			
+			//check if a user with this email
+			//already exists
+			User.findOne({email: email}, function(err,obj) { 
+				//if the user does not exist
+				//and there is no error
+				//create the new user
+				if(!obj && !err) {
 					User.create({email: email, password: encryptor.encryptPass(password)}, function(err, obj) {
+						//if a non-empty object is received,
+						//then the user has been created
 						if(obj) {
 							console.log('User created', JSON.stringify(obj, null, 2));
 						}
-						
+						//an error here indicates that the user could not be created
 						if (err) {
 							console.log('User was not found and was not created!')
 							res.redirect('/auth/signup');
 						}
 					});
 				}
-				else if (obj.length > 0) {
+				//a non-empty object here means a user with the email
+				//already exists in the database
+				else if (obj) {
 					console.log("User already exists", JSON.stringify(obj));
 					res.locals.userAlreadyExists = true;
 				} 
@@ -79,7 +99,6 @@ module.exports = function(User) {
 					res.locals.err = err;
 				}
 			}).then(function(){
-				console.log("in then");
 				next();
 			});
 			

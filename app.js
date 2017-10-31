@@ -25,9 +25,9 @@ app.get('/', function(req, res){
 
 app.use('/auth', auth);
 
-// app.get('/myconferences', function(req, res) {
-//     res.render('myconferences');
-// });
+app.get('/myconferences', function(req, res) {
+    res.render('myconferences', {conferences: res.locals.conferences});
+});
 
 app.listen(port, function(){
     console.log("Listening on port", port);
