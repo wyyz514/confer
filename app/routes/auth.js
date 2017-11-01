@@ -20,51 +20,8 @@ module.exports = function(models) {
 	router.post('/login', auth.login(), function(req, res) {
 		//if the credentials passed are valid
 		if(res.locals.authenticated) {
-			//variables to handle message display in the login view
-			res.locals.type    = "success";
-			res.locals.message = "You successfully logged in.";
-			
-			//we first read the privileges table asynchronously
-			//and pass the resolved records to the the promise's then chain
-			var _privileges = new Promise(function(resolve, reject) {
-				models.Privilege.find({email: res.locals.authenticatedEmail}, function(err, obj){
-					if(!err)
-						resolve(obj);
-				});
-			});
-			
-			//here, we are guaranteed to have read all the records for privileges
-			_privileges.then(function(privileges){
-				//now we wrap each IO request to the track and conferences table in a promise
-				//so that we can avoid the situation whereby a piece of code, depending on the
-				//IO result, is executed before the result is available for consumption
-				var conferenceTrackInfo = privileges.map(function(privilege) {
-					return new Promise(function(resolve, reject){
-						var conferenceTrack = {};
-						models.Track.findById(privilege.tid, function(err, track){
-							if (!err)
-								conferenceTrack.trackName = track.name;
-							//we chain the two IO calls using a promise so they are performed
-							//one after the other
-						}).then(function() {
-							models.Conference.findById(privilege.cid, function(err, conf) {
-								if(! err)
-									conferenceTrack.conferenceName = conf.name;
-									conferenceTrack.conferenceId   = conf.id
-									//since we chained the two IO calls, we are guaranteed to have
-									//the conferenceTrack information copied correctly to the object
-									resolve(conferenceTrack);
-							})
-						})	
-					});
-				});
-				//here we resolve all the IO promises to obtain all the conference and track info
-				Promise.all(conferenceTrackInfo).then(function(conferenceTracks){
-					res.locals.conferences = conferenceTracks;
-					res.render('myconferences', {conferences: res.locals.conferences});
-				});
-			})
-			
+			//display the myconferences page
+			res.redirect('/myconferences');
 		} else {
 			//for res.locals.err, make new condition branch
 			res.locals.type = "danger";

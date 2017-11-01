@@ -1,4 +1,4 @@
-//THIS IS THE MIDDLEWARE FILE. ONLY LOGIC AND SETTING OF res.locals VARIABLES TO BE USED IN THE ROUTE FILE
+//THIS IS THE MIDDLEWARE FILE. These functions are used in the routes file ie /routes/auth/auth.js
 var encryptor  = require('../helpers/encryptor');
 
 module.exports = function(User) {
@@ -32,7 +32,7 @@ module.exports = function(User) {
 							//set the res.locals.authenticatedEmail to the email the user passed
 							if(isCorrectPassword) {
 								res.locals.authenticated = true;
-								res.locals.authenticatedEmail = email;
+								req.session.authenticatedEmail = email;
 							} 
 							else {
 								//hash comparison of password failed

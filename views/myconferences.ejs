@@ -3,10 +3,25 @@
     <%- include('./partials/head') %>
     
     <body>
-        <select>
-            <% conferences.map(function(conference){ %>
-            <option value="<%= conference.trackName %>"><%= conference.conferenceName %></option>
-            <% }); %>
-        </select>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; position: fixed;">
+            <div class="row">
+                <h2>Select a conference</h2>
+                <form action="/myconferences" method="post">
+                    <select class="col-md-4" name="conference">
+                        <% conferences.map(function(conference){ %>
+                            <option value=<%= conference.conferenceId + '-' + conference.trackId %>>
+                                <%= conference.conferenceName + "-" + conference.trackName  %>
+                            </option>
+                        <% }); %>
+                    </select> 
+                    <br>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+            
+        </div>
+        
+         <%- include('./partials/scripts') %>
     </body>
 </html>
