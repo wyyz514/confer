@@ -1,7 +1,7 @@
 //THIS IS THE MIDDLEWARE FILE. These functions are used in the routes file ie /routes/auth/auth.js
 var encryptor  = require('../helpers/encryptor');
 
-module.exports = function(User) {
+module.exports = function(models) {
 	
 	function login() {
 
@@ -13,7 +13,7 @@ module.exports = function(User) {
 			var password = req.body.password;
 			 
 			//using findOne here since emails are unique 
-			User
+			models.User
 				.findOne({email: email}, function(err, obj) {
 					//if there is no error,
 					//check if the obj returned is not null
@@ -71,12 +71,12 @@ module.exports = function(User) {
 			
 			//check if a user with this email
 			//already exists
-			User.findOne({email: email}, function(err,obj) { 
+			models.User.findOne({email: email}, function(err,obj) { 
 				//if the user does not exist
 				//and there is no error
 				//create the new user
 				if(!obj && !err) {
-					User.create({email: email, password: encryptor.encryptPass(password)}, function(err, obj) {
+					models.User.create({email: email, password: encryptor.encryptPass(password)}, function(err, obj) {
 						//if a non-empty object is received,
 						//then the user has been created
 						if(obj) {
@@ -104,9 +104,20 @@ module.exports = function(User) {
 			
 		}
 	}
+	
+	function logout () {
+		return function (req, res) {
+			if (req.session.isLoggedIn == true) {
+				req.session.destroy();
+				res.redirect("/auth/login");
+			}
+		}
+	} 
+	
 	return {
 		login: login,
-		signup: signup
+		signup: signup,
+		logout: logout
 		
 	}
 }

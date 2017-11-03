@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+   <%- include('../partials/head') %>
+    <body>
+        <style>
+            .hidden {
+                display: none;    
+            }
+            
+            .alert-container {
+                position: fixed;
+                top: 30px;
+                width: 700px;
+                left: calc((100% - 700px) / 2);
+            }
+            
+            .hidd
+            @media (max-width: 767px) {
+                width: 85%;
+                left: 7.5%;
+            }
+        </style>
+        <div class="alert-container hidden">
+            <div class="alert alert-danger">Incorrect username or password</div> 
+        </div>
+        <div class="container" style="height: 100vh;">
+            <div class="row" style="top:300px; position: relative;">
+                <div class="col-md-8 col-md-offset-4">
+                    <h2>Admin Login</h2><br>
+                    <form>
+                        
+                        <div class="form-group row">
+                            <label for="email" class="col-sm-2 control-label">Email</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="password" class="col-sm-2 control-label">Password</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success" id="login">Log in</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/scripts') %>
+        <script>
+            $("form").submit(function(e){
+               var data = {
+                   email: $("#email").val().trim(),
+                   password: $("#password").val()
+               }
+               e.preventDefault();
+               $.ajax({
+                   method: "POST",
+                   data: data,
+                   url: "/admin/login",
+                   success: function(response) {
+                       if(response.status == 200) {
+                           document.location.href = response.target;
+                       } else {
+                           //clear all input fields and display error
+                           $("input").val();
+                           $(".alert-container").removeClass("hidden");
+                           setTimeout(function(){
+                               $(".alert-container").addClass("hidden");
+                           }, 2000);
+                       }
+                   }
+                });
+                return false;
+            });
+        </script>
+    </body>
+</html>

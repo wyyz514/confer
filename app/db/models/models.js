@@ -7,5 +7,6 @@ module.exports = function () {
     models.Privilege  = require('./Privilege')(mongoose); 
     models.Conference = require('./Conference')(mongoose); 
     models.Track      = require('./Track')(mongoose);
+    models.Admin      = require('./Admin')(mongoose);
     return models;
 }

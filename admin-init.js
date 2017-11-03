@@ -1,7 +1,7 @@
 module.exports = function (models, encryptor) {
     //admin stuff
 
-    models.User.create({firstname: "admin", lastname:"admin", email: "admin@admin.com", password: encryptor.encryptPass("admin")}, function(err, obj) {
+    models.Admin.create({firstname: "admin", lastname:"admin", email: "admin@admin.com", password: encryptor.encryptPass("admin")}, function(err, obj) {
         if(!err) {
             console.log("admin created");
         }

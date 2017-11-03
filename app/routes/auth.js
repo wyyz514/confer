@@ -5,7 +5,7 @@ var encryptor = require('../helpers/encryptor');
 
 
 module.exports = function(models) {
-	var auth      = require('../middlewares/auth')(models.User);
+	var auth      = require('../middlewares/auth')(models);
 	
 	//view handlers
 	router.get('/login', function(req, res){

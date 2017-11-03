@@ -7,6 +7,7 @@ var port       = process.env.PORT || 3000;
 var db         = require('./app/db/db')();
 var models     = require('./app/db/models/models')();
 var auth       = require('./app/routes/auth')(models);
+var admin      = require('./app/routes/admin')(models);
 var session    = require('express-session');
 
 if(process.argv[2] == "admin-init") {
@@ -31,6 +32,7 @@ app.get('/', function(req, res){
 });
 
 app.use('/auth', auth);
+app.use('/admin', admin);
 
 app.get('/myconferences', function(req, res, next) {
     if(req.session.authenticatedEmail) {
