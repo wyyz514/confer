@@ -25,13 +25,8 @@
     "express": "^4.15.5",
     "express-session": "^1.15.6",
     "mongoose": "^4.12.5",
-    "morgan": "^1.8.2",
-    "mysql2": "^1.4.2",
-    "nconf": "^0.8.4",
-    "sequelize": "^4.11.0"
+    "mongoose-datatable": "^1.0.6",
+    "morgan": "^1.8.2"
   },
-  "devDependencies": {
-    "async-waterfall": "^0.1.5",
-    "sequelize-cli": "^3.0.0"
-  }
+  "devDependencies": {}
 }

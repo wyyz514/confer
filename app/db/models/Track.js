@@ -3,5 +3,12 @@ module.exports = function (mongoose) {
         cid: String,
         name: String
     });
+    
+    Track.getDataTable = function getData (request, response) {
+        
+        Track.dataTable(request.query, function (err, data) {
+            response.send(data);
+        });
+    }
     return Track;    
 }

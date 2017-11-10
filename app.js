@@ -8,11 +8,25 @@ var db         = require('./app/db/db')();
 var models     = require('./app/db/models/models')();
 var auth       = require('./app/routes/auth')(models);
 var admin      = require('./app/routes/admin')(models);
+var datatables = require('./app/routes/datatables')(models); 
 var session    = require('express-session');
 
-if(process.argv[2] == "admin-init") {
+//initialize admin table and conferences table
+if(process.argv.indexOf("init") > -1) {
+	var adminInit  = require('./admin-init')(models, encryptor); 
+	var conferenceInit = require('./conference-init')(models);
+}
+
+else {
+	if(process.argv[2] == "admin-init") {
     var adminInit  = require('./admin-init')(models, encryptor);    
 }
+
+	if(process.argv.indexOf('conference-init') > -1) {
+		var conferenceInit = require('./conference-init')(models);
+	}	
+}
+
 
 
 app.set('view engine', 'ejs');
@@ -33,7 +47,16 @@ app.get('/', function(req, res){
 
 app.use('/auth', auth);
 app.use('/admin', admin);
+app.use('/datatables', function(req, res, next){
+	if(req.session.isLoggedIn && req.session.privilege == "admin") {
+		next();
+	}
+	else {
+		res.redirect("/auth/login");
+	}
+}, datatables);
 
+//for ordinary user
 app.get('/myconferences', function(req, res, next) {
     if(req.session.authenticatedEmail) {
         next();
@@ -45,7 +68,7 @@ app.get('/myconferences', function(req, res, next) {
 },
 function(req, res) {
     //we first read the privileges table asynchronously
-	//and pass the resolved records to the the promise's then chain
+	//and pass the resolved records to the promise's then chain
 	var _privileges = new Promise(function(resolve, reject) {
 		models.Privilege.find({email: req.session.authenticatedEmail}, function(err, obj){
 			if(!err)

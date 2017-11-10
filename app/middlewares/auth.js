@@ -59,6 +59,8 @@ module.exports = function(models) {
 	function signup() {
 
 		return function (req, res, next) {
+			var firstName = req.body.firstname;
+			var lastName  = req.body.lastname;
 			var email     = req.body.email;
 			var password  = req.body.password;
 			var confirm   = req.body.confirm;
@@ -76,7 +78,7 @@ module.exports = function(models) {
 				//and there is no error
 				//create the new user
 				if(!obj && !err) {
-					models.User.create({email: email, password: encryptor.encryptPass(password)}, function(err, obj) {
+					models.User.create({email: email, password: encryptor.encryptPass(password), firstname: firstName, lastname: lastName}, function(err, obj) {
 						//if a non-empty object is received,
 						//then the user has been created
 						if(obj) {
