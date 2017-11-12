@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <%- include('../partials/head') %>
+    <body>
+
+        <div class="container">
+            <%- include('../partials/flash') %>
+                <div class="col-md-12">
+                    <h2>Edit Profile</h2>
+                    <form>
+                        <div class="form-group row">
+                            <label for="firstname" class="col-sm-2 control-label">First Name</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="firstname" class="form-control" id="firstname" name="firstname" placeholder="First Name" value="<%=user.firstname%>">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="lastname" class="col-sm-2 control-label">Last Name</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="lastname" class="form-control" id="lastname" name="lastname" placeholder="Last Name" value="<%=user.lastname%>">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="email" class="col-sm-2 control-label">Email</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Email" value=<%=user.email%>>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="password" class="col-sm-2 control-label">Password</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="confirm-password" class="col-sm-2 control-label">Confirm Password</label>
+                            <div class="col-sm-10 col-md-6">
+                                <input type="confirm-password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm Password">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/scripts') %>
+        <script>
+            $("form").submit(function(e){
+                e.preventDefault();
+                var data = $("form").serializeArray();
+                
+                $.ajax({
+                    method:"POST",
+                    url: "/profile/edit",
+                    data: data
+                }).then(function(response){
+                    document.location.href = response.target;
+                })
+                
+            })    
+        </script>
+        
+    </body>
+</html>

@@ -21,7 +21,7 @@ module.exports = function(models) {
 		//if the credentials passed are valid
 		if(res.locals.authenticated) {
 			//display the myconferences page
-			res.redirect('/myconferences');
+			res.redirect('/profile');
 		} else {
 			//for res.locals.err, make new condition branch
 			res.locals.type = "danger";
@@ -49,6 +49,7 @@ module.exports = function(models) {
 		}
 		
 	});
-
+	
+	router.get('/logout', auth.logout());
     return router;
 }

@@ -9,6 +9,8 @@ var models     = require('./app/db/models/models')();
 var auth       = require('./app/routes/auth')(models);
 var admin      = require('./app/routes/admin')(models);
 var datatables = require('./app/routes/datatables')(models); 
+var profile    = require('./app/routes/profile')(models, encryptor); 
+
 var session    = require('express-session');
 
 //initialize admin table and conferences table
@@ -39,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000000 }}));
 
 app.get('/', function(req, res){
     res.render('index');
@@ -55,6 +57,15 @@ app.use('/datatables', function(req, res, next){
 		res.redirect("/auth/login");
 	}
 }, datatables);
+
+app.use('/profile', function (req, res, next){
+	if (req.session.isLoggedIn) {
+		next();
+	}
+	else {
+		res.redirect('/auth/login');
+	}
+}, profile);
 
 //for ordinary user
 app.get('/myconferences', function(req, res, next) {

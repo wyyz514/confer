@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <%- include('../partials/head') %>
+    <body>
+
+        <div class="container">
+            <%- include('../partials/flash') %>
+                <div class="col-md-12">
+                    <h2>Welcome <%= user.firstname %></h2><br>
+                    <h4><a href="/profile/edit">Edit Profile</a></h4>
+                </div>
+            </div>
+        </div>
+        <%- include('../partials/scripts') %>
+        
+    </body>
+</html>

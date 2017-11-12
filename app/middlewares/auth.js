@@ -33,6 +33,8 @@ module.exports = function(models) {
 							if(isCorrectPassword) {
 								res.locals.authenticated = true;
 								req.session.authenticatedEmail = email;
+								req.session.isLoggedIn = true;
+								//req.session.privilege  =
 							} 
 							else {
 								//hash comparison of password failed
