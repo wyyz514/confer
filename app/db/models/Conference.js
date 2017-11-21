@@ -3,7 +3,8 @@ module.exports = function (mongoose) {
         name: String,
         startDate: Date,
         endDate: Date,
-        reviewForm: Object
+        reviewForm: Object,
+        tpcChairId: String
     });
     
     Conference.getDataTable = function getData (request, response) {

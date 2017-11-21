@@ -10,7 +10,7 @@ var auth       = require('./app/routes/auth')(models);
 var admin      = require('./app/routes/admin')(models);
 var datatables = require('./app/routes/datatables')(models); 
 var profile    = require('./app/routes/profile')(models, encryptor); 
-
+var conference = require('./app/routes/conference')(models); 
 var session    = require('express-session');
 
 //initialize admin table and conferences table
@@ -50,7 +50,7 @@ app.get('/', function(req, res){
 app.use('/auth', auth);
 app.use('/admin', admin);
 app.use('/datatables', function(req, res, next){
-	if(req.session.isLoggedIn && req.session.privilege == "admin") {
+	if(req.session.isLoggedIn) {
 		next();
 	}
 	else {
@@ -67,7 +67,18 @@ app.use('/profile', function (req, res, next){
 	}
 }, profile);
 
+app.use('/conference', function (req, res, next){
+	if (req.session.isLoggedIn) {
+		next();
+	}
+	else {
+		res.redirect('/auth/login');
+	}
+}, conference);
+
+
 //for ordinary user
+/*
 app.get('/myconferences', function(req, res, next) {
     if(req.session.authenticatedEmail) {
         next();
@@ -120,13 +131,7 @@ function(req, res) {
 		});
 	})
 });
-
-app.post('/myconferences', function(req, res) {
-    console.log(req.query);
-    console.log(req.session);
-    res.end();
-});
-
+*/
 app.listen(port, function(){
     console.log("Listening on port", port);
 })

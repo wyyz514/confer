@@ -103,10 +103,11 @@ module.exports = function(models) {
     //same as above but for conferences
     router.post("/conferences/:id/edit", function(req, res) {
         var conferenceId = req.params.id;
+        
         models.Conference.findById(conferenceId, function(err, conference) {
-           conference.set('name', req.query.name);
-           conference.set('startDate', req.query.startDate);
-           conference.set('endDate', req.query.endDate);
+           conference.set('name', req.body.name);
+           conference.set('startDate', req.body.startDate);
+           conference.set('endDate', req.body.endDate);
            conference.save(function(err,savedConference) {
                if(!err && savedConference) {
                    res.json({
@@ -119,5 +120,36 @@ module.exports = function(models) {
         
     });
     
+    router.post("/conferences/:id/assigntpc/:userid", function(req, res) {
+        var conferenceId = req.params.id;
+        var tpcChairId   = req.params.userid;
+        
+        models.Conference.findById(conferenceId, function(err, conference) {
+           var previousTPCChairId = conference.tpcChairId;
+           conference.set('tpcChairId', tpcChairId);
+           
+           if (previousTPCChairId) {
+                models.Privilege.create({userid: tpcChairId, cid: conferenceId, tid: "0", privilege: "TPC Chair"}, function(err, savedPrivilege) {
+                   if (!err && savedPrivilege) {
+                       models.Privilege.remove({userid: previousTPCChairId}, function(err) {
+                           if(!err) {
+                               
+                           }
+                       });
+                    }
+                });    
+           }
+           
+        
+           conference.save(function(err,savedConference) {
+               if(!err && savedConference) {
+                   res.json({
+                       'status': "ok",
+                       'tpcChairId': tpcChairId
+                   });
+               }
+           });
+        });
+    });
     return router;
 };

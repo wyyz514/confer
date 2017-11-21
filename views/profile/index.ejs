@@ -9,9 +9,30 @@
                     <h2>Welcome <%= user.firstname %></h2><br>
                     <h4><a href="/profile/edit">Edit Profile</a></h4>
                 </div>
+                <table id="conferenceTable" class="table table-striped table-bordered"></table>
             </div>
         </div>
         <%- include('../partials/scripts') %>
-        
+        <script>
+            $('#conferenceTable').dataTable({
+              "bProcessing" : true,
+              "bServerSide" : true,
+              "ajax" : { url: '/datatables/conferences' },
+              "columns" : [
+                { data : "_id",
+                  title: "Conference ID",
+                  render: function (data, type, row, meta) {
+                      return "<a href=/conference/"+data+">"+data+"</a>";
+                  }
+                },
+                { data : "name",
+                  title: "Name"},
+                { data : "startDate",
+                  title: "Start Date"},
+                { data : "endDate",
+                  title: "End Date"}
+              ]
+            });
+        </script>
     </body>
 </html>
