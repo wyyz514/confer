@@ -12,7 +12,6 @@ module.exports = function (mongoose) {
     //handle datatable requests
     User.getDataTable = function getData (request, response) {
         User.dataTable(request.query, function (err, data) {
-            console.log("DATA:", data)
             response.send(data);
         });
     };

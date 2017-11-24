@@ -17,7 +17,7 @@
                     <div class="form-group row">
                         <label for="startDate" class="col-sm-2 control-label">Start Date</label>
                         <div class="col-sm-10 col-md-6">
-                            <input type="date" form-control id="startDate" name="startDate" value="<%=conference.startDate%>">
+                            <input type="date" class="form-control" id="startDate" name="startDate" value="<%=conference.startDate%>">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -33,12 +33,21 @@
                     </div>
                 </form>
                 <table id="userTable" class="table table-striped table-bordered"></table>
+                <h2>Tracks</h2>
+                
+                <div class="col-md-5">
+                    <input type="text" id="newTrackName" class="form-control">
+                </div>
+                <button type="button" id="createTrack" class="btn btn-success">Create New Track</button>    
+                <br><br>
+                <table id="trackTable" class="table table-striped table-bordered"></table>
             </div>
         </div>
         <%- include('../partials/scripts') %>
         <script>
            var tpcChairId = "<%=conference.tpcChairId %>";
             
+            //save edited conference data
             $("form").submit(function(e){
                 e.preventDefault();
                 var data = $("form").serializeArray();
@@ -53,6 +62,7 @@
                 
             });
             
+            //
             var userTable = $('#userTable').dataTable({
               "bProcessing" : true,
               "bServerSide" : true,
@@ -78,9 +88,38 @@
     		    }
 		      ]
             });
+            
+            //
+            var trackTable = $('#trackTable').dataTable({
+              "bProcessing" : true,
+              "bServerSide" : true,
+              "ajax" : { 
+                  url: '/datatables/tracks', 
+                  data: {
+                      "cid": "<%=conference.id%>"
+                  }
+              },
+		      "columns" : [
+    		    { data : "_id",
+    		      title: "Track ID",
+    		      render: function(data, type, row, meta) {
+    		          return "<a href=/admin/conferences/<%= conference.id %>/tracks/" + data + "/edit>" + data + "</a>";
+    		      }  
+    		    },
+    		    { data : "name",
+    		      title: "Name"},
+    		    { data : "cid",
+    		      title: "Conference ID"
+    		    }
+		      ]
+            });
+            
+            trackTable.DataTable().draw();
         </script>
         <script>
+            //add button listeners
             $(document).ready(function(){
+                //listener on assign buttons
                $(document).on('click', '.tpcassign', function(e) {
                    var tpcChairID = $(e.target).attr("id");
                    $.ajax({
@@ -88,13 +127,27 @@
                        url:    "/admin/conferences/"+"<%=conference.id %>"+"/assigntpc/"+ tpcChairID,
                        success: function(response) {
                            if(response.status === "ok") {
-                               alert("You assigned somebody as a TPC chair");
+                               alert("You assigned a TPC chair");
                                tpcChairId = response.tpcChairId;
                                userTable.api().ajax.reload();
                            }
                        }
                    })
-               }) 
+               });
+              
+            //listener on create track button
+            $("#createTrack").click(function(e) {
+                   var newTrackName = $("#newTrackName").val();
+                   $.ajax({
+                       url: "/admin/conferences/<%=conference.id%>/tracks",
+                       method: "POST",
+                       data: {name: newTrackName},
+                       success: function (response) {
+                           alert(response.status);
+                           trackTable.api().ajax.reload();
+                       }
+                   });
+               });
             });
         </script>
     </body>

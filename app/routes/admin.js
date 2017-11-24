@@ -120,6 +120,7 @@ module.exports = function(models) {
         
     });
     
+    //tpc chair assignment
     router.post("/conferences/:id/assigntpc/:userid", function(req, res) {
         var conferenceId = req.params.id;
         var tpcChairId   = req.params.userid;
@@ -133,22 +134,116 @@ module.exports = function(models) {
                    if (!err && savedPrivilege) {
                        models.Privilege.remove({userid: previousTPCChairId}, function(err) {
                            if(!err) {
-                               
+                               conference.save(function(err, saved) {
+                                   if(!err && saved) {
+                                       res.json({status: "ok", tpcChairId: tpcChairId});
+                                   }
+                               });
                            }
                        });
                     }
                 });    
            }
-           
+           else {
+                conference.save(function(err,savedConference) {
+                   if(!err && savedConference) {
+                       res.json({
+                           'status': "ok",
+                           'tpcChairId': tpcChairId
+                       });
+                   }
+               });   
+           }
         
-           conference.save(function(err,savedConference) {
-               if(!err && savedConference) {
-                   res.json({
-                       'status': "ok",
-                       'tpcChairId': tpcChairId
-                   });
-               }
-           });
+           
+        });
+    });
+    
+    //create a new track
+    router.post('/conferences/:id/tracks/', function (req, res) {
+        var trackName     = req.body.name;
+        var conferenceId  = req.params.id;
+        
+        models.Track.create({name: trackName, cid: conferenceId}, function (err, track) {
+            if (track && !err) {
+                res.json({
+                    status: "ok"
+                });
+            }
+        });
+        
+    });
+    
+    //edit an existing track
+    router.post("/conferences/:id/tracks/:trackid/edit", function(req, res) {
+        var trackId      = req.params.trackid;
+        
+        models.Track.findById(trackId, function(err, track) {
+            track.set('name', req.body.name);
+            track.save(function(err, savedTrack) {
+                if(!err && savedTrack) {
+                    res.json({status: "ok"});
+                }
+                else {
+                    //do something
+                }
+            });
+        });
+        
+    });
+    
+    //show track edit page
+    router.get("/conferences/:id/tracks/:trackid/edit", function(req, res) {
+        models.Track.findById(req.params.trackid, function(err, track) {
+            if (!err && track) {
+                res.render("edit/track", {track: track});    
+            } else {
+                //do something
+            }
+        })
+        
+    });
+    
+    //assign track chair
+    router.post("/conferences/:id/tracks/:trackid/trackassign/:userid", function (req, res) {
+        
+        models.Track.findById(req.params.trackid, function (err, track) {
+            var previousTrackChairId = track.trackChairId;
+            var trackChairId         = req.params.userid;
+            var trackId              = req.params.trackid;
+            
+            track.set('trackChairId', trackChairId); 
+            
+            if(previousTrackChairId) {
+                //create new privilege entry for the newly assigned chair and remove the previous chair's privilege
+                models.Privilege.create({userid: trackChairId, cid: req.params.id, tid: trackId, privilege: "Track Chair"}, function(err, savedPrivilege) {
+                   if (!err && savedPrivilege) {
+                       models.Privilege.remove({userid: previousTrackChairId}, function(err) {
+                           if(!err) {
+                                track.save(function(err, saved) {
+                                   if (!err && saved) {
+                                       res.json({
+                                          "status": "ok",
+                                          "trackChairId": trackChairId
+                                       });
+                                   } 
+                                });
+                           }
+                       });
+                    }
+                });    
+            }
+            else {
+                track.save(function(err,savedConference) {
+                   if(!err && savedConference) {
+                       res.json({
+                           'status': "ok",
+                           'trackChairId': trackChairId
+                       });
+                   }
+               });    
+            }
+            
         });
     });
     return router;

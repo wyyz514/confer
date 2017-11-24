@@ -6,7 +6,7 @@ module.exports = function (mongoose) {
         cid: String,
         privilege: {
             type: String,
-            enum: ['admin', 'TPC Chair']
+            enum: ['admin', 'TPC Chair', 'Track Chair']
         }
     });    
     
