@@ -34,7 +34,7 @@ module.exports = function(models) {
 								res.locals.authenticated = true;
 								req.session.authenticatedEmail = email;
 								req.session.isLoggedIn = true;
-								//req.session.privilege  =
+								req.session.userid	= obj._id;
 							} 
 							else {
 								//hash comparison of password failed
@@ -111,7 +111,7 @@ module.exports = function(models) {
 	
 	function logout () {
 		return function (req, res) {
-			if (req.session.isLoggedIn == true) {
+			if (req.session.isLoggedIn) {
 				req.session.destroy();
 				res.redirect("/auth/login");
 			}

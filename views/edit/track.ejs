@@ -20,12 +20,15 @@
                             </div>
                         </div>
                     </form>
-                    <table id="userTable" class="table table-striped table-bordered"></table>
+                    <% if(privilege.toLowerCase() == "admin" || privilege.toLowerCase() == "tpc chair") { %>
+                        <table id="userTable" class="table table-striped table-bordered"></table>
+                    <% } %>
                 </div>
             </div>
         </div>
         <%- include('../partials/scripts') %>
         <script>
+            isAdmin = <%= privilege == "admin" ? true : false %>;
             trackChairId  = "<%= track.trackChairId%>";
             $("form").submit(function(e){
                 e.preventDefault();
@@ -75,7 +78,7 @@
                    var chairId = $(e.target).attr("id");
                    $.ajax({
                        method: "POST",
-                       url:    "/admin/conferences/"+"<%=track.cid %>"+"/tracks/<%= track.id %>/trackassign/"+ chairId,
+                       url:    isAdmin ? "/admin/conferences/"+"<%=track.cid %>"+"/tracks/<%= track.id %>/trackassign/"+ chairId : "/conferences/"+"<%=track.cid %>"+"/tracks/<%= track.id %>/trackassign/"+ chairId,
                        success: function(response) {
                            if(response.status === "ok") {
                                alert("You assigned a Track chair");

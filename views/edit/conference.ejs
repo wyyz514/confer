@@ -32,7 +32,10 @@
                         </div>
                     </div>
                 </form>
-                <table id="userTable" class="table table-striped table-bordered"></table>
+                <% if(privilege == "admin") { %>
+                    <table id="userTable" class="table table-striped table-bordered"></table>
+                <% } %>
+                
                 <h2>Tracks</h2>
                 
                 <div class="col-md-5">
@@ -46,7 +49,7 @@
         <%- include('../partials/scripts') %>
         <script>
            var tpcChairId = "<%=conference.tpcChairId %>";
-            
+           var isAdmin    = <%= privilege  == "admin" ? true : false%>;
             //save edited conference data
             $("form").submit(function(e){
                 e.preventDefault();
@@ -54,7 +57,7 @@
                 console.log(data);
                 $.ajax({
                     method:"POST",
-                    url: "/admin/conferences/"+"<%=conference.id%>"+"/edit",
+                    url: isAdmin ? "/admin/conferences/"+"<%=conference.id%>"+"/edit" : "/conferences/"+"<%=conference.id%>"+"/edit",
                     data: data
                 }).then(function(response){
                     document.location.href = response.target;
@@ -63,31 +66,33 @@
             });
             
             //
-            var userTable = $('#userTable').dataTable({
-              "bProcessing" : true,
-              "bServerSide" : true,
-              "ajax" : { url: '/datatables/users' },
-		      "columns" : [
-    		    { data : "_id",
-    		      title: "User ID",
-    		      render: function(data, type, row, meta) {
-    		          return "<a href=/admin/users/" + data + "/edit>" + data + "</a>";
-    		      }  
-    		    },
-    		    { data : "email",
-    		      title: "Email"},
-    		    { data : "firstname",
-    		      title: "First Name"},
-    		    { data : "lastname",
-    		      title: "Last Name"},
-    		    {
-    		      title: "Assign TPC Chair",
-    		      render: function (data, type, row, meta) {
-    		          return tpcChairId == row._id ? "TPC Chair":"<button type='button' class='btn btn-success tpcassign' id="+row._id+">Assign</button>";
-    		      }
-    		    }
-		      ]
-            });
+            if (isAdmin) {
+                var userTable = $('#userTable').dataTable({
+                  "bProcessing" : true,
+                  "bServerSide" : true,
+                  "ajax" : { url: '/datatables/users' },
+    		      "columns" : [
+        		    { data : "_id",
+        		      title: "User ID",
+        		      render: function(data, type, row, meta) {
+        		          return "<a href=/admin/users/" + data + "/edit>" + data + "</a>";
+        		      }  
+        		    },
+        		    { data : "email",
+        		      title: "Email"},
+        		    { data : "firstname",
+        		      title: "First Name"},
+        		    { data : "lastname",
+        		      title: "Last Name"},
+        		    {
+        		      title: "Assign TPC Chair",
+        		      render: function (data, type, row, meta) {
+        		          return tpcChairId == row._id ? "TPC Chair":"<button type='button' class='btn btn-success tpcassign' id="+row._id+">Assign</button>";
+        		      }
+        		    }
+    		      ]
+                });
+            }
             
             //
             var trackTable = $('#trackTable').dataTable({
@@ -103,7 +108,7 @@
     		    { data : "_id",
     		      title: "Track ID",
     		      render: function(data, type, row, meta) {
-    		          return "<a href=/admin/conferences/<%= conference.id %>/tracks/" + data + "/edit>" + data + "</a>";
+    		          return isAdmin ? "<a href=/admin/conferences/<%= conference.id %>/tracks/" + data + "/edit>" + data + "</a>" : "<a href=/conferences/<%= conference.id %>/tracks/" + data + "/edit>" + data + "</a>";
     		      }  
     		    },
     		    { data : "name",
@@ -113,7 +118,7 @@
     		    }
 		      ]
             });
-            
+        
             trackTable.DataTable().draw();
         </script>
         <script>
@@ -139,7 +144,7 @@
             $("#createTrack").click(function(e) {
                    var newTrackName = $("#newTrackName").val();
                    $.ajax({
-                       url: "/admin/conferences/<%=conference.id%>/tracks",
+                       url: isAdmin ? "/admin/conferences/<%=conference.id%>/tracks" : "/conferences/<%=conference.id%>/tracks",
                        method: "POST",
                        data: {name: newTrackName},
                        success: function (response) {

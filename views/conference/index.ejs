@@ -5,14 +5,52 @@
         <div class="container">
             <%- include('../partials/flash') %>
             <div class="col-md-12">
-                <h1>Conference Details</h1>
+                <h1>Conference Details</h1> <%= privilege %>
+                <% if(privilege.toLowerCase() == "tpc chair" || privilege.toLowerCase() == "admin") { %>
+                    <h1>
+                        I AM THE <%= privilege %> AND CAN THEREFORE EDIT THIS CONFERENCE.
+                        ANY OTHER USER TYPE WILL NOT BE ABLE TO EDIT THE CONFERENCE BUT THEY CAN 
+                        READ THE DATA
+                    </h1>
+                    <a href="/conferences/<%= conference.id %>/edit">Edit</a>
+                <% } %>
                 <h3><%= conference.name %></h3>
                 <h4><%= new Date(conference.startDate).toLocaleString() %> -  <%= new Date(conference.endDate).toLocaleString() %></h4>
                 <br>
                 <br>
                 <h2>Tracks</h2>
+                <table class="table table-striped table-bordered" id="trackTable"></table>
             </div>
         </div>
         <%- include('../partials/scripts') %>
+        <script>
+             
+             var trackTable = $('#trackTable').dataTable({
+              "bProcessing" : true,
+              "bServerSide" : true,
+              "ajax" : { 
+                  url: '/datatables/tracks', 
+                  data: {
+                      "cid": "<%=conference.id%>"
+                  }
+              },
+		      "columns" : [
+    		    { data : "_id",
+    		      title: "Track ID",
+    		      render: function(data, type, row, meta) {
+    		          return "<a href=/conferences/<%= conference.id %>/tracks/" + data + ">" + data + "</a>";
+    		      }  
+    		    },
+    		    { data : "name",
+    		      title: "Name"},
+    		    { data : "cid",
+    		      title: "Conference ID",
+    		      render: function(data, type, row, meta) {
+    		          return "<a href=/conferences/" + data + ">" + data + "</a>"
+    		      } 
+    		    }
+		      ]
+            });
+        </script>
     </body>
 </html>

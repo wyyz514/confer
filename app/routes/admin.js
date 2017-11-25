@@ -2,9 +2,23 @@ var express          = require("express");
 var router           = express.Router();
 var encryptor        = require("../helpers/encryptor");
 
+
 module.exports = function(models) {
     
     var logoutMiddleware = require("../middlewares/auth")(models).logout;
+    var conference       = require('../middlewares/conference')(models);
+    var track            = require('../middlewares/track')(models);
+    
+    router.post("/conferences/:id/edit", conference.saveConference());
+     //create a new track
+    router.post('/conferences/:id/tracks/', track.createTrack());
+    
+    //edit an existing track
+    router.post("/conferences/:id/tracks/:trackid/edit", track.saveTrack());
+    
+    //show track edit page
+    router.get("/conferences/:id/tracks/:trackid/edit", track.getEditView());
+    
     
     router.get("/", function (req, res, next){
         //if admin already logged in, then display dashboard
@@ -72,15 +86,7 @@ module.exports = function(models) {
     });
     
     //same thing as above but for conferences
-    router.get("/conferences/:id/edit", function(req, res) {
-        var conferenceId = req.params.id;
-        models.Conference.findById(conferenceId, function(err, conference){
-           if(!err) {
-               res.render("edit/conference", {conference: conference});
-           } 
-        });
-        
-    });
+    router.get("/conferences/:id/edit", conference.getEditView());
     
     //post route for saving the updated user
     router.post("/users/:id/edit", function(req, res) {
@@ -99,26 +105,7 @@ module.exports = function(models) {
            });
         });
     });
-    
-    //same as above but for conferences
-    router.post("/conferences/:id/edit", function(req, res) {
-        var conferenceId = req.params.id;
         
-        models.Conference.findById(conferenceId, function(err, conference) {
-           conference.set('name', req.body.name);
-           conference.set('startDate', req.body.startDate);
-           conference.set('endDate', req.body.endDate);
-           conference.save(function(err,savedConference) {
-               if(!err && savedConference) {
-                   res.json({
-                       'status': "ok",
-                       'target': "/admin"
-                   })
-               }
-           });
-        });
-        
-    });
     
     //tpc chair assignment
     router.post("/conferences/:id/assigntpc/:userid", function(req, res) {
@@ -157,51 +144,6 @@ module.exports = function(models) {
         
            
         });
-    });
-    
-    //create a new track
-    router.post('/conferences/:id/tracks/', function (req, res) {
-        var trackName     = req.body.name;
-        var conferenceId  = req.params.id;
-        
-        models.Track.create({name: trackName, cid: conferenceId}, function (err, track) {
-            if (track && !err) {
-                res.json({
-                    status: "ok"
-                });
-            }
-        });
-        
-    });
-    
-    //edit an existing track
-    router.post("/conferences/:id/tracks/:trackid/edit", function(req, res) {
-        var trackId      = req.params.trackid;
-        
-        models.Track.findById(trackId, function(err, track) {
-            track.set('name', req.body.name);
-            track.save(function(err, savedTrack) {
-                if(!err && savedTrack) {
-                    res.json({status: "ok"});
-                }
-                else {
-                    //do something
-                }
-            });
-        });
-        
-    });
-    
-    //show track edit page
-    router.get("/conferences/:id/tracks/:trackid/edit", function(req, res) {
-        models.Track.findById(req.params.trackid, function(err, track) {
-            if (!err && track) {
-                res.render("edit/track", {track: track});    
-            } else {
-                //do something
-            }
-        })
-        
     });
     
     //assign track chair
