@@ -47,20 +47,9 @@ app.get('/', function(req, res){
     res.render('index');
 });
 
-app.use("*", function (req, res, next) {
-	console.log(req.url, "-", req.method);
-	next();
-}) 
+app.use('/admin', admin);
 
 app.use('/auth', auth);
-app.use('/admin', function (req, res, next) {
-	if (req.session.privilege == "admin") {
-		next();
-	}
-	else {
-		res.redirect("/profile");
-	}
-}, admin);
 
 app.use('/datatables', function(req, res, next){
 	if(req.session.isLoggedIn) {

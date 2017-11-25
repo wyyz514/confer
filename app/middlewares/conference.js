@@ -6,19 +6,24 @@ module.exports = function (models) {
                 var conferenceId = req.params.id;
                 models.Conference.findById(conferenceId, function (err, conference) {
                     if (!err && conference) {
-                        
-                         models.Privilege.findOne({userid: req.session.userid, cid: conference._id}, function(err, privilege){
-                            if(!err && privilege) {
-                                 res.render("conference/index", {conference: conference, privilege: privilege.privilege});
-                            }
-                            else if(! privilege) {
-                                res.render("conference/index", {conference: conference, privilege:"Ordinary"});
-                            }
-                            else {
-                                //an error happened. probably flash something
-                                res.render("conference/index", {conference: conference, privilege:""});
-                            }
-                        });
+                        if(req.session.privilege == "admin") {
+                            res.render("edit/conference", {conference: conference, privilege: "admin"})
+                        }
+                        else {
+                            models.Privilege.findOne({userid: req.session.userid, cid: conference._id}, function(err, privilege){
+                                if(!err && privilege) {
+                                     res.render("conference/index", {conference: conference, privilege: privilege.privilege});
+                                }
+                                else if(! privilege) {
+                                    res.render("conference/index", {conference: conference, privilege:"Ordinary"});
+                                }
+                                else {
+                                    //an error happened. probably flash something
+                                    res.render("conference/index", {conference: conference, privilege:""});
+                                }
+                            });
+                        }
+                         
                     }
                     else {
                         //show some error
@@ -49,21 +54,26 @@ module.exports = function (models) {
             
             return function(req, res) {
                 var conferenceId = req.params.id;
+               
                 models.Conference.findById(conferenceId, function(err, conference){
                     if (!err && conference) {
-                        
-                         models.Privilege.findOne({userid: req.session.userid, cid: conference._id}, function(err, privilege){
-                            if(!err && privilege) {
-                                 res.render("edit/conference", {conference: conference, privilege: privilege.privilege});
-                            }
-                            else if(! privilege) {
-                                res.render("edit/conference", {conference: conference, privilege:"Ordinary"});
-                            }
-                            else {
-                                //an error happened. probably flash something
-                                res.render("edit/conference", {conference: conference, privilege:""});
-                            }
-                        });
+                        if(req.session.privilege == "admin") {
+                            res.render("edit/conference", {conference: conference, privilege: "admin"})
+                        }
+                        else {
+                            models.Privilege.findOne({userid: req.session.userid, cid: conference._id}, function(err, privilege){
+                                if(!err && privilege) {
+                                     res.render("edit/conference", {conference: conference, privilege: privilege.privilege});
+                                }
+                                else if(! privilege) {
+                                    res.render("edit/conference", {conference: conference, privilege:"Ordinary"});
+                                }
+                                else {
+                                    //an error happened. probably flash something
+                                    res.render("edit/conference", {conference: conference, privilege:""});
+                                }
+                            });
+                        }
                     }
                     else {
                         //show some error

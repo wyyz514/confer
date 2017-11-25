@@ -4,18 +4,24 @@ module.exports = function (models) {
             return function(req, res) {
                 models.Track.findById(req.params.trackid, function (err, track) {
                     if(!err && track) {
-                        models.Privilege.findOne({userid: req.session.userid, cid: track.cid}, function(err, privilege){
-                            if(!err && privilege) {
-                                 res.render("track/index", {track: track, privilege: privilege.privilege});
-                            }
-                            else if(! privilege) {
-                                res.render("track/index", {track: track, privilege:"Ordinary"});
-                            }
-                            else {
-                                //an error happened. probably flash something
-                                res.render("track/index", {conference: track, privilege:""});
-                            }
-                        });    
+                        if(req.session.privilege == "admin") {
+                            res.render("track/index", {track: track, privilege: "admin"})
+                        }
+                        else {
+                            models.Privilege.findOne({userid: req.session.userid, cid: track.cid}, function(err, privilege){
+                                if(!err && privilege) {
+                                     res.render("track/index", {track: track, privilege: privilege.privilege});
+                                }
+                                else if(! privilege) {
+                                    res.render("track/index", {track: track, privilege:"Ordinary"});
+                                }
+                                else {
+                                    //an error happened. probably flash something
+                                    res.render("track/index", {conference: track, privilege:""});
+                                }
+                            });      
+                        }
+                          
                     }
                     
                 
@@ -61,18 +67,24 @@ module.exports = function (models) {
             return function(req, res) {
                 models.Track.findById(req.params.trackid, function (err, track) {
                     if(!err && track) {
-                        models.Privilege.findOne({userid: req.session.userid, cid: track.cid}, function(err, privilege){
-                            if(!err && privilege) {
-                                 res.render("edit/track", {track: track, privilege: privilege.privilege});
-                            }
-                            else if(! privilege) {
-                                res.render("edit/track", {track: track, privilege:"Ordinary"});
-                            }
-                            else {
-                                //an error happened. probably flash something
-                                res.render("edit/track", {conference: track, privilege:""});
-                            }
-                        });    
+                        if(req.session.privilege == "admin") {
+                            res.render("edit/track", {track: track, privilege: "admin"})
+                        }
+                        else {
+                            models.Privilege.findOne({userid: req.session.userid, cid: track.cid}, function(err, privilege){
+                                if(!err && privilege) {
+                                     res.render("edit/track", {track: track, privilege: privilege.privilege});
+                                }
+                                else if(! privilege) {
+                                    res.render("edit/track", {track: track, privilege:"Ordinary"});
+                                }
+                                else {
+                                    //an error happened. probably flash something
+                                    res.render("edit/track", {conference: track, privilege:""});
+                                }
+                            });    
+                        }
+                            
                     }
                     
                 
