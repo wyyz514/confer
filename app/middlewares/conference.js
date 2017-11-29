@@ -10,12 +10,12 @@ module.exports = function (models) {
                             res.render("edit/conference", {conference: conference, privilege: "admin"})
                         }
                         else {
-                            models.Privilege.findOne({userid: req.session.userid, cid: conference._id}, function(err, privilege){
+                            models.Privilege.findOne({userid: req.session.userid, cid: conference._id, tid: 0}, function(err, privilege){
                                 if(!err && privilege) {
                                      res.render("conference/index", {conference: conference, privilege: privilege.privilege});
                                 }
                                 else if(! privilege) {
-                                    res.render("conference/index", {conference: conference, privilege:"Ordinary"});
+                                    res.render("conference/index", {conference: conference, privilege:"Ordinary User"});
                                 }
                                 else {
                                     //an error happened. probably flash something
@@ -42,8 +42,7 @@ module.exports = function (models) {
                    conference.save(function(err,savedConference) {
                        if(!err && savedConference) {
                            res.json({
-                               'status': "ok",
-                               'target': "/"
+                               'status': "ok"
                            })
                        }
                    });

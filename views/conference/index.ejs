@@ -4,17 +4,17 @@
     <body>
         <div class="container">
             <%- include('../partials/flash') %>
+            <%- include('../partials/navbar') %>
             <div class="col-md-12">
-                <h1>Conference Details</h1> <%= privilege %>
-                <% if(privilege.toLowerCase() == "tpc chair" || privilege.toLowerCase() == "admin") { %>
-                    <h1>
-                        I AM THE <%= privilege %> AND CAN THEREFORE EDIT THIS CONFERENCE.
-                        ANY OTHER USER TYPE WILL NOT BE ABLE TO EDIT THE CONFERENCE BUT THEY CAN 
-                        READ THE DATA
-                    </h1>
-                    <a href="/conferences/<%= conference.id %>/edit">Edit</a>
-                <% } %>
-                <h3><%= conference.name %></h3>
+                <h1>
+                    Conference Details
+                     <% if(privilege.toLowerCase() == "tpc chair" || privilege.toLowerCase() == "admin") { %>
+                        <a href="/conferences/<%= conference.id %>/edit" style="font-size: 14px;">Edit</a>
+                    <% } %>
+                </h1> <span class="label label-info"><%= privilege %></span>
+                <h3>
+                    <%= conference.name %>  
+                </h3>
                 <h4><%= new Date(conference.startDate).toLocaleString() %> -  <%= new Date(conference.endDate).toLocaleString() %></h4>
                 <br>
                 <br>

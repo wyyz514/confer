@@ -46,9 +46,7 @@ module.exports = function(models) {
 					}
 					else {
 						//we received an error object
-						//so set the res.locals.err value to be used in the next middleware
-						console.log("login error", err);
-						res.locals.err = err;
+						console.log(err);
 					}
 					
 				}).then(function(){

@@ -9,15 +9,24 @@ module.exports = function(models) {
     var conference       = require('../middlewares/conference')(models);
     var track            = require('../middlewares/track')(models);
     
-    router.post("/conferences/:id/edit", conference.saveConference());
+    var lockMiddleware   = function (req, res, next) {
+        if(req.session.privilege === "admin") {
+            next();
+        }    
+        else {
+            res.end();
+        }
+    }
+    
+    router.post("/conferences/:id/edit", lockMiddleware, conference.saveConference());
      //create a new track
-    router.post('/conferences/:id/tracks/', track.createTrack());
+    router.post('/conferences/:id/tracks/', lockMiddleware, track.createTrack());
     
     //edit an existing track
-    router.post("/conferences/:id/tracks/:trackid/edit", track.saveTrack());
+    router.post("/conferences/:id/tracks/:trackid/edit", lockMiddleware, track.saveTrack());
     
     //show track edit page
-    router.get("/conferences/:id/tracks/:trackid/edit", track.getEditView());
+    router.get("/conferences/:id/tracks/:trackid/edit", lockMiddleware, track.getEditView());
     
     
     router.get("/", function (req, res, next){
@@ -26,9 +35,8 @@ module.exports = function(models) {
             res.render("admin/index");
         } else {
             //whoever is trying to access is either not admin or not a logged in admin
-            res.locals.type    = "danger";
-            res.locals.message = "Invalid privilege level";
-            res.render("auth/login");
+            req.flash("danger", "Invalid privilege level");
+            res.redirect(req.headers.referer);
         }
     });
     
@@ -52,8 +60,7 @@ module.exports = function(models) {
                    req.session.isLoggedIn = "true";
                    req.session.authenticatedEmail = email;
                    res.json({
-                       "status": 200,
-                       "target": "/admin/"
+                       "status": 200
                    });
                }
                else {
@@ -72,10 +79,10 @@ module.exports = function(models) {
        });
     });    
     
-    router.get("/logout", logoutMiddleware());
+    router.get("/logout", lockMiddleware, logoutMiddleware());
     
     //when a user id is clicked, display the user edit page
-    router.get("/users/:id/edit", function(req, res) {
+    router.get("/users/:id/edit", lockMiddleware, function(req, res) {
         var userId = req.params.id;
         models.User.findById(userId, function(err, user){
            if(!err) {
@@ -86,10 +93,10 @@ module.exports = function(models) {
     });
     
     //same thing as above but for conferences
-    router.get("/conferences/:id/edit", conference.getEditView());
+    router.get("/conferences/:id/edit", lockMiddleware, conference.getEditView());
     
     //post route for saving the updated user
-    router.post("/users/:id/edit", function(req, res) {
+    router.post("/users/:id/edit", lockMiddleware, function(req, res) {
         var userId = req.params.id;
         models.User.findById(userId, function(err, user) {
            user.set('firstname', req.body.firstname);
@@ -98,8 +105,7 @@ module.exports = function(models) {
            user.save(function(err,savedUser) {
                if(!err && savedUser) {
                    res.json({
-                       'status': "ok",
-                       'target': "/admin"
+                       'status': "ok"
                    })
                }
            });
@@ -108,7 +114,7 @@ module.exports = function(models) {
         
     
     //tpc chair assignment
-    router.post("/conferences/:id/assigntpc/:userid", function(req, res) {
+    router.post("/conferences/:id/assigntpc/:userid", lockMiddleware, function(req, res) {
         var conferenceId = req.params.id;
         var tpcChairId   = req.params.userid;
         
@@ -119,7 +125,7 @@ module.exports = function(models) {
            if (previousTPCChairId) {
                 models.Privilege.create({userid: tpcChairId, cid: conferenceId, tid: "0", privilege: "TPC Chair"}, function(err, savedPrivilege) {
                    if (!err && savedPrivilege) {
-                       models.Privilege.remove({userid: previousTPCChairId}, function(err) {
+                       models.Privilege.remove({userid: previousTPCChairId, tid: "0", cid: conferenceId}, function(err) {
                            if(!err) {
                                conference.save(function(err, saved) {
                                    if(!err && saved) {
@@ -147,7 +153,7 @@ module.exports = function(models) {
     });
     
     //assign track chair
-    router.post("/conferences/:id/tracks/:trackid/trackassign/:userid", function (req, res) {
+    router.post("/conferences/:id/tracks/:trackid/trackassign/:userid", lockMiddleware, function (req, res) {
         
         models.Track.findById(req.params.trackid, function (err, track) {
             var previousTrackChairId = track.trackChairId;
@@ -160,7 +166,7 @@ module.exports = function(models) {
                 //create new privilege entry for the newly assigned chair and remove the previous chair's privilege
                 models.Privilege.create({userid: trackChairId, cid: req.params.id, tid: trackId, privilege: "Track Chair"}, function(err, savedPrivilege) {
                    if (!err && savedPrivilege) {
-                       models.Privilege.remove({userid: previousTrackChairId}, function(err) {
+                       models.Privilege.remove({userid: previousTrackChairId, tid: trackId, cid: req.params.id}, function(err) {
                            if(!err) {
                                 track.save(function(err, saved) {
                                    if (!err && saved) {

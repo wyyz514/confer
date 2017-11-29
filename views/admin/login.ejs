@@ -20,9 +20,7 @@
                 left: 7.5%;
             }
         </style>
-        <div class="alert-container hidden">
-            <div class="alert alert-danger">Incorrect username or password</div> 
-        </div>
+       
         <div class="container" style="height: 100vh;">
             <div class="row" style="top:300px; position: relative;">
                 <div class="col-md-8 col-md-offset-4">
@@ -64,7 +62,7 @@
                    url: "/admin/login",
                    success: function(response) {
                        if(response.status == 200) {
-                           document.location.href = response.target;
+                           document.location.href = "/admin/";
                        } else {
                            //clear all input fields and display error
                            $("input").val();

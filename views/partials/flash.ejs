@@ -1,19 +1,33 @@
 <style>
     .alert-container {
-        position: fixed;
+        position: relative;
         top: 30px;
-        width: 700px;
-        left: calc((100% - 700px) / 2);
-    }
-    
-    @media (max-width: 767px) {
-        width: 85%;
-        left: 7.5%;
     }
 </style>
 
-<% if(locals.type && locals.message) { %>
+<% if(typeof messages != undefined) { %>
     <div class="alert-container">
-        <div class="alert alert-<%= locals.type %>"><%= locals.message %></div> 
+       
+        <% if(messages.info) {%>
+            <div class="alert alert-info%>"><%= messages.info %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div> 
+        <% } %>
+        <% if(messages.success) {%>
+            <div class="alert alert-success%>"><%= messages.success %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div> 
+        <% } %>
+        <% if(messages.danger) {%>
+            <div class="alert alert-danger%>"><%= messages.danger %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div> 
+        <% } %>
     </div>
 <% } %>

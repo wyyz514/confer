@@ -12,7 +12,7 @@ var datatables = require('./app/routes/datatables')(models);
 var profile    = require('./app/routes/profile')(models, encryptor); 
 var conference = require('./app/routes/conference')(models); 
 var session    = require('express-session');
-
+var flash      = require('express-flash');
 //initialize admin table and conferences table
 if(process.argv.indexOf("init") > -1) {
 	var adminInit  = require('./admin-init')(models, encryptor); 
@@ -42,6 +42,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000000 }}));
+
+app.use(flash());
 
 app.get('/', function(req, res){
     res.render('index');

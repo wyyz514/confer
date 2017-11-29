@@ -6,8 +6,8 @@
     <body>
         <div class="container">
             <div class="col-md-12">
-                <h2>Track details</h2>
-                <h4><%=track.name %></h4> <%= privilege %> <% if(privilege.toLowerCase() !== "ordinary") { %><a href="/conferences/<%=track.cid%>/tracks/<%=track.id%>/edit">Edit</a><% } %>
+                <h2>Track details <% if(privilege.toLowerCase() !== "ordinary user") { %><a href="/conferences/<%=track.cid%>/tracks/<%=track.id%>/edit" style="font-size: 14px;">Edit</a><% } %></h2>
+                <h4><%=track.name %></h4> <span class="label label-info"><%= privilege %></span> 
             </div>
         </div>
         <%- include('../partials/scripts') %>
