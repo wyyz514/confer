@@ -25,26 +25,25 @@ module.exports = function(models) {
 			console.log(res.locals.firstname, req.session);
 			res.redirect('/profile');
 		} else {
+			req.flash("danger", "Invalid credentials. Please try again.");
 			res.render('auth/login');
 		}
 	});
 
 	router.post('/signup', auth.signup(), function(req, res){
-		console.log(res.locals.userAlreadyExists);
+
 		if (! res.locals.err) {
 			if(res.locals.userAlreadyExists) {
-				res.locals.type    = "danger";
-				res.locals.message = "An account for this email already exists.";
-				res.render('auth/signup');
+				req.flash("danger", "A user with this email already exists.")
+				res.redirect('/auth/signup');
 			} else {
-				res.locals.type = "success";
-				res.locals.message = "Your account has been successfully created.";
-				res.render('auth/login');
+				req.flash("success", "Your account has been successfully created. You can now log in.")
+				res.redirect('/auth/login');
 			}	
 		} else {
-			res.locals.type = "danger";
-			res.locals.message = res.locals.err.toString();
-			res.render('auth/signup');
+			console.log(res.locals.err);
+			req.flash("danger", "Something went wrong.")
+			res.redirect('/auth/signup');
 		}
 		
 	});

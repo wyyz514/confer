@@ -9,12 +9,12 @@ module.exports = function (models) {
                             res.render("track/index", {track: track, privilege: "admin"})
                         }
                         else {
-                            models.Privilege.findOne({userid: req.session.userid, cid: track.cid}, function(err, privilege){
+                            models.Privilege.findOne({userid: req.session.userid, cid: track.cid, $or:[{tid: "0"}, {tid: track._id}]}, function(err, privilege){
                                 if(!err && privilege) {
                                      res.render("track/index", {track: track, privilege: privilege.privilege});
                                 }
                                 else if(! privilege) {
-                                    res.render("track/index", {track: track, privilege:"Ordinary"});
+                                    res.render("track/index", {track: track, privilege:"Ordinary User"});
                                 }
                                 else {
                                     //an error happened. probably flash something
@@ -73,12 +73,12 @@ module.exports = function (models) {
                             res.render("edit/track", {track: track, privilege: "admin"})
                         }
                         else {
-                            models.Privilege.findOne({userid: req.session.userid, cid: track.cid}, function(err, privilege){
+                            models.Privilege.findOne({userid: req.session.userid, cid: track.cid, $or: [{tid: "0"}, {tid: track._id}]}, function(err, privilege){
                                 if(!err && privilege) {
                                      res.render("edit/track", {track: track, privilege: privilege.privilege});
                                 }
                                 else if(! privilege) {
-                                    res.render("edit/track", {track: track, privilege:"Ordinary"});
+                                    res.render("edit/track", {track: track, privilege:"Ordinary User"});
                                 }
                                 else {
                                     //an error happened. probably flash something

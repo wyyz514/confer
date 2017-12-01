@@ -6,7 +6,7 @@
         <div class="container">
             <%- include('../partials/flash') %>
             <div class="col-md-12">
-                <h1>Conference Details</h1> <%= privilege %>
+                <h1>Conference Details</h1> <span class="label label-default"><%= privilege %></span>
                 <% if(privilege.toLowerCase() == "tpc chair" || privilege.toLowerCase() == "admin") { %>
                     <a href="/conferences/<%= conference.id %>/edit">Edit</a>
                 <% } %>

@@ -36,7 +36,7 @@ module.exports = function(models) {
         } else {
             //whoever is trying to access is either not admin or not a logged in admin
             req.flash("danger", "Invalid privilege level");
-            res.redirect(req.headers.referer);
+            res.redirect("/profile");
         }
     });
     
@@ -59,6 +59,7 @@ module.exports = function(models) {
                    req.session.privilege  = "admin";
                    req.session.isLoggedIn = "true";
                    req.session.authenticatedEmail = email;
+                   res.locals.firstname = "Admin"
                    res.json({
                        "status": 200
                    });
