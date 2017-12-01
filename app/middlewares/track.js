@@ -2,18 +2,19 @@ module.exports = function (models) {
     return {
         getTrackView: function() {
             return function(req, res) {
+                res.locals.firstname = req.session.firstname;
                 models.Track.findById(req.params.trackid, function (err, track) {
                     if(!err && track) {
                         if(req.session.privilege == "admin") {
                             res.render("track/index", {track: track, privilege: "admin"})
                         }
                         else {
-                            models.Privilege.findOne({userid: req.session.userid, cid: track.cid, $or:[{tid: "0"}, {tid: track._id}]}, function(err, privilege){
+                            models.Privilege.findOne({userid: req.session.userid, cid: track.cid}, function(err, privilege){
                                 if(!err && privilege) {
                                      res.render("track/index", {track: track, privilege: privilege.privilege});
                                 }
                                 else if(! privilege) {
-                                    res.render("track/index", {track: track, privilege:"Ordinary User"});
+                                    res.render("track/index", {track: track, privilege:"Ordinary"});
                                 }
                                 else {
                                     //an error happened. probably flash something
@@ -65,6 +66,7 @@ module.exports = function (models) {
         },
         getEditView: function() {
             return function(req, res) {
+                res.locals.firstname = req.session.firstname;
                 models.Track.findById(req.params.trackid, function (err, track) {
                     if(!err && track) {
                         if(req.session.privilege == "admin") {

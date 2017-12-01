@@ -2,10 +2,9 @@
 <html>
     <%- include('../partials/head') %>
     <body>
-        <%- include('../partials/navbar') %>
+        <%- include('../partials/navbar',  {firstname: locals.firstname}) %>
         <div class="container">
             <%- include('../partials/flash') %>
-            
                 <div class="col-md-12">
                     <h2>Edit Track</h2>
                     <form>
@@ -42,7 +41,7 @@
                 }).then(function(response){
                     //document.location.href = response.target;
                     if(response.status == "ok") {
-                        alert("Track successfully saved");
+                        alert("Track saved");
                     }
                 })
                 

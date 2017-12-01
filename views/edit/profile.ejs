@@ -2,7 +2,7 @@
 <html>
     <%- include('../partials/head') %>
     <body>
-        <%- include('../partials/navbar') %>
+        <%- include('../partials/navbar', {firstname: user.firstname}) %>
         <div class="container">
             <%- include('../partials/flash') %>
 

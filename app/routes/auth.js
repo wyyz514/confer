@@ -21,27 +21,30 @@ module.exports = function(models) {
 		//if the credentials passed are valid
 		if(res.locals.authenticated) {
 			//display the myconferences page
+			res.locals.firstname = req.session.firstname;
+			console.log(res.locals.firstname, req.session);
 			res.redirect('/profile');
 		} else {
-			req.flash("danger", "Invalid credentials. Please try again.")
-			res.redirect('/auth/login');
+			res.render('auth/login');
 		}
 	});
 
 	router.post('/signup', auth.signup(), function(req, res){
-
+		console.log(res.locals.userAlreadyExists);
 		if (! res.locals.err) {
 			if(res.locals.userAlreadyExists) {
-				req.flash("danger", "A user with this email already exists.")
-				res.redirect('/auth/signup');
+				res.locals.type    = "danger";
+				res.locals.message = "An account for this email already exists.";
+				res.render('auth/signup');
 			} else {
-				req.flash("success", "Your account has been successfully created. You can now log in.")
-				res.redirect('/auth/login');
+				res.locals.type = "success";
+				res.locals.message = "Your account has been successfully created.";
+				res.render('auth/login');
 			}	
 		} else {
-			console.log(res.locals.err);
-			req.flash("danger", "Something went wrong.")
-			res.redirect('/auth/signup');
+			res.locals.type = "danger";
+			res.locals.message = res.locals.err.toString();
+			res.render('auth/signup');
 		}
 		
 	});

@@ -2,13 +2,11 @@
 <html>
     <%- include('../partials/head') %>
     <body>
-
+        <%- include('../partials/navbar', {firstname: user.firstname}) %>
         <div class="container">
             <%- include('../partials/flash') %>
-                <div class="col-md-12">
-                    <h2>Welcome <%= user.firstname %></h2><br>
-                    <h4><a href="/profile/edit">Edit Profile</a></h4>
-                </div>
+                
+                <h4><a href="/profile/edit">Edit Profile</a></h4>
                 <table id="conferenceTable" class="table table-striped table-bordered"></table>
             </div>
         </div>

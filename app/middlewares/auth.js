@@ -34,6 +34,7 @@ module.exports = function(models) {
 								res.locals.authenticated = true;
 								req.session.authenticatedEmail = email;
 								req.session.isLoggedIn = true;
+								req.session.firstname  = obj.firstname;
 								req.session.userid	= obj._id;
 							} 
 							else {
